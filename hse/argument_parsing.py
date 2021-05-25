@@ -20,7 +20,12 @@ def get_parser():
                         default=32, type=int)
     parser.add_argument('-mb', '--max-batch-size', help="Maximum number of batches to consider",
                         default=400, type=int)
-    parser.add_argument('-v', '--verbose', help="Increase output verbosity", action='store_true')
+    parser.add_argument('-it', '--iterations', help="Number of iterations to estimate forward time per input batch.",
+                        default=100, type=int)
+    parser.add_argument('-gc', '--garbage-collect', help="Enable garbage collection between forward passes.",
+                        action='store_true')
+    parser.add_argument('-v', '--verbose', help="Increase output verbosity",
+                        action='store_true')
 
     # Conditional Parameters
     input_group = parser.add_mutually_exclusive_group(required=True)

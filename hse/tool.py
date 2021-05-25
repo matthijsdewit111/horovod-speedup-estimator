@@ -1,3 +1,4 @@
+import gc
 import importlib
 from time import time_ns
 
@@ -5,9 +6,9 @@ import numpy as np
 import torch
 from scipy.optimize import curve_fit
 
+from hse.argument_parsing import get_args
 from hse.fit_functions import stepped_linear_2d
 from hse.plotting import plot_prediction, plot_predicted_speedup
-from hse.argument_parsing import get_args
 
 ignore_2_and_3 = True
 
@@ -58,12 +59,14 @@ def estimate_forward_time(model, batch_size):
     input_shape = (batch_size,) + tuple(input_size)
     input_data = torch.randn(input_shape)
 
-    # warmup
-    for _ in range(100):
+    warmup_rounds = args.iterations // 10
+    for _ in range(warmup_rounds):
         model(input_data)
 
     forward_time_results = []
-    for _ in range(1000):
+    for _ in range(args.iterations - warmup_rounds):
+        if args.garbage_collect:
+            gc.collect()
         start = time_ns()
         model(input_data)
         end = time_ns()
@@ -86,12 +89,12 @@ if __name__ == "__main__":
     estimated_params = estimate_parameters(processes_tested, message_sizes_tested, mean_communication_times)
 
     num_param = count_trainable_parameters(model)
-    processes_range = np.linspace(2, args.max_processes, num=min(args.max_processes - 1, 100), dtype=int)
+    processes_range = np.linspace(2, args.max_processes, num=min(args.max_processes - 1, 50), dtype=int)
     num_model_parameters = np.full((len(processes_range),), num_param)
     data_to_predict = np.stack((processes_range, num_model_parameters), axis=1)
     predicted_communication_times = stepped_linear_2d(data_to_predict, *estimated_params)
 
-    batch_size_range = np.linspace(1, args.max_batch_size, num=min(args.max_batch_size, 100), dtype=int)
+    batch_size_range = np.linspace(1, args.max_batch_size, num=min(args.max_batch_size, 50), dtype=int)
     forward_times_per_batch = np.array([estimate_forward_time(model, bs) for bs in batch_size_range])
 
     speedup = np.zeros((len(processes_range), len(batch_size_range)))
