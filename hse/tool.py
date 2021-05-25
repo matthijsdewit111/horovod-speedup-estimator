@@ -103,4 +103,4 @@ if __name__ == "__main__":
             s = forward_times_per_batch[j] / ((predicted_communication_times[i] + forward_times_per_batch[j]) / p)
             speedup[i][j] = s if s >= 1 else np.nan
 
-    plot_predicted_speedup(speedup, batch_size_range, processes_range)
+    plot_predicted_speedup(speedup, batch_size_range, processes_range, save=args.save_result)

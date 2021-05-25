@@ -26,7 +26,7 @@ def plot_prediction(function, xdata, popt, X, Y, means):
     plt.show()
 
 
-def plot_predicted_speedup(speedup, x_values, y_values):
+def plot_predicted_speedup(speedup, x_values, y_values, save=False):
     RdYlGn = copy(cm.get_cmap('RdYlGn'))
     RdYlGn.set_bad(color='black')
 
@@ -38,4 +38,8 @@ def plot_predicted_speedup(speedup, x_values, y_values):
     # plt.xticks(np.arange(min(x_values), max(x_values) + 1, 5))
     # plt.yticks(np.arange(min(y_values), max(y_values) + 1, 4))
     plt.grid(linewidth=0.3)
-    plt.show()
+
+    if save:
+        plt.savefig('hse-result.png')
+    else:
+        plt.show()
