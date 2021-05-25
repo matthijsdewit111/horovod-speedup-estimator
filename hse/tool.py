@@ -72,7 +72,7 @@ def estimate_forward_time(model, batch_size):
         end = time_ns()
         forward_time_results.append((end - start) * 1E-9)
 
-    return np.mean(forward_time_results)
+    return np.median(forward_time_results)
 
 
 if __name__ == "__main__":
