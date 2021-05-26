@@ -16,8 +16,6 @@ def get_parser():
     # Flags
     parser.add_argument('-v', '--verbose', help="Increase output verbosity",
                         action='store_true')
-    parser.add_argument('-save', '--save-result', help="Save plot of result as file (hse-result.png)",
-                        action='store_true')
 
     # Optional parameters
     parser.add_argument('-s', '--system', help="Current system name. (Only lisa supported)",
@@ -31,8 +29,10 @@ def get_parser():
                         default=100, type=int)
     parser.add_argument('-loss', '--loss-function', help="Loss function to use for backwards pass",
                         default='mse_loss', type=non_empty_string)
-    parser.add_argument('-cm', '--color-map', help="Matplotlib color map to use for 2D plot",
+    parser.add_argument('-cm', '--color-map', help="Matplotlib color map to used for figure",
                         default='plasma', type=non_empty_string)
+    parser.add_argument('-sa', '--save-as', help="Save figure under specified name",
+                        type=non_empty_string)
 
     # Conditional Parameters
     input_group = parser.add_mutually_exclusive_group(required=True)

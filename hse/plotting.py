@@ -26,7 +26,7 @@ def plot_prediction(function, xdata, popt, X, Y, means):
     plt.show()
 
 
-def plot_predicted_speedup(speedup, x_values, y_values, save=False, cmap_name='plasma'):
+def plot_predicted_speedup(speedup, x_values, y_values, save_as=None, cmap_name='plasma'):
     cmap = copy(cm.get_cmap(cmap_name))
     cmap.set_bad(color='black')
 
@@ -39,7 +39,7 @@ def plot_predicted_speedup(speedup, x_values, y_values, save=False, cmap_name='p
     # plt.yticks(np.arange(min(y_values), max(y_values) + 1, 4))
     plt.grid(linewidth=0.3)
 
-    if save:
-        plt.savefig('hse-result.png')
+    if save_as:
+        plt.savefig(save_as)
     else:
         plt.show()
