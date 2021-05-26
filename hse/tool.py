@@ -1,3 +1,4 @@
+import gc
 import importlib
 from time import time_ns
 
@@ -59,6 +60,8 @@ def estimate_computation_time(model, batch_size):
     input_data = torch.randn(input_shape)
 
     loss_func = getattr(torch.functional.F, args.loss_function)
+
+    gc.collect()
 
     forward_time_results = []
     for _ in range(args.iterations):
