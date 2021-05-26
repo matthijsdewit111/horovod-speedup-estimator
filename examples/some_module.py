@@ -1,7 +1,7 @@
 from torch import nn
 
 
-class MyNet(nn.Module):
+class MyLargeNet(nn.Module):
     def __init__(self):
         super().__init__()
         self.l1 = nn.Linear(100, 100, bias=False)
@@ -14,5 +14,11 @@ class MyNet(nn.Module):
         return x
 
 
-class A:
-    pass
+class MySmallNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.l1 = nn.Linear(100, 10, bias=False)
+
+    def forward(self, x):
+        x = self.l1(x)
+        return x

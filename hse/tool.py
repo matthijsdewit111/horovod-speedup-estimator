@@ -1,4 +1,3 @@
-import gc
 import importlib
 from time import time_ns
 
@@ -49,7 +48,7 @@ def estimate_parameters(X, Y, means):
     return popt
 
 
-def estimate_forward_time(model, batch_size):
+def estimate_computation_time(model, batch_size):
     if args.input_size:
         input_size = args.input_size
     else:
@@ -59,16 +58,14 @@ def estimate_forward_time(model, batch_size):
     input_shape = (batch_size,) + tuple(input_size)
     input_data = torch.randn(input_shape)
 
-    warmup_rounds = args.iterations // 10
-    for _ in range(warmup_rounds):
-        model(input_data)
+    loss_func = getattr(torch.functional.F, args.loss_function)
 
     forward_time_results = []
-    for _ in range(args.iterations - warmup_rounds):
-        if args.garbage_collect:
-            gc.collect()
+    for _ in range(args.iterations):
         start = time_ns()
-        model(input_data)
+        output = model(input_data)
+        loss = loss_func(output, output)
+        loss.backward()
         end = time_ns()
         forward_time_results.append((end - start) * 1E-9)
 
@@ -95,12 +92,12 @@ if __name__ == "__main__":
     predicted_communication_times = stepped_linear_2d(data_to_predict, *estimated_params)
 
     batch_size_range = np.linspace(1, args.max_batch_size, num=min(args.max_batch_size, 50), dtype=int)
-    forward_times_per_batch = np.array([estimate_forward_time(model, bs) for bs in batch_size_range])
+    computation_times_per_batch = np.array([estimate_computation_time(model, bs) for bs in batch_size_range])
 
     speedup = np.zeros((len(processes_range), len(batch_size_range)))
     for i, p in enumerate(processes_range):
         for j in range(len(batch_size_range)):
-            s = forward_times_per_batch[j] / ((predicted_communication_times[i] + forward_times_per_batch[j]) / p)
+            s = computation_times_per_batch[j] / ((predicted_communication_times[i] + computation_times_per_batch[j]) / p)
             speedup[i][j] = s if s >= 1 else np.nan
 
-    plot_predicted_speedup(speedup, batch_size_range, processes_range, save=args.save_result)
+    plot_predicted_speedup(speedup, batch_size_range, processes_range, save=args.save_result, cmap_name=args.color_map)

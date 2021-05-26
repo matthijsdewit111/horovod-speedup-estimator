@@ -26,11 +26,11 @@ def plot_prediction(function, xdata, popt, X, Y, means):
     plt.show()
 
 
-def plot_predicted_speedup(speedup, x_values, y_values, save=False):
-    RdYlGn = copy(cm.get_cmap('RdYlGn'))
-    RdYlGn.set_bad(color='black')
+def plot_predicted_speedup(speedup, x_values, y_values, save=False, cmap_name='plasma'):
+    cmap = copy(cm.get_cmap(cmap_name))
+    cmap.set_bad(color='black')
 
-    plt.imshow(speedup, cmap=RdYlGn, origin='lower', vmin=1, aspect='auto',
+    plt.imshow(speedup, cmap=cmap, origin='lower', vmin=1, aspect='auto',
                extent=(min(x_values) - .5, max(x_values) + .5, min(y_values) - .5, max(y_values) + .5))
     plt.colorbar(label='speedup')
     plt.xlabel('batch size')

@@ -13,6 +13,12 @@ def get_parser():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
 
+    # Flags
+    parser.add_argument('-v', '--verbose', help="Increase output verbosity",
+                        action='store_true')
+    parser.add_argument('-save', '--save-result', help="Save plot of result as file (hse-result.png)",
+                        action='store_true')
+
     # Optional parameters
     parser.add_argument('-s', '--system', help="Current system name. (Only lisa supported)",
                         default='lisa', type=non_empty_string)
@@ -20,14 +26,13 @@ def get_parser():
                         default=32, type=int)
     parser.add_argument('-mb', '--max-batch-size', help="Maximum number of batches to consider",
                         default=400, type=int)
-    parser.add_argument('-it', '--iterations', help="Number of iterations to estimate forward time per input batch",
+    parser.add_argument('-it', '--iterations', help="Number of iterations to estimate time per training cycle "
+                                                    "(forward + backward pass)",
                         default=100, type=int)
-    parser.add_argument('-gc', '--garbage-collect', help="Enable garbage collection between forward passes",
-                        action='store_true')
-    parser.add_argument('-save', '--save-result', help="Save plot of result as file (hse-result.png)",
-                        action='store_true')
-    parser.add_argument('-v', '--verbose', help="Increase output verbosity",
-                        action='store_true')
+    parser.add_argument('-loss', '--loss-function', help="Loss function to use for backwards pass",
+                        default='mse_loss', type=non_empty_string)
+    parser.add_argument('-cm', '--color-map', help="Matplotlib color map to use for 2D plot",
+                        default='plasma', type=non_empty_string)
 
     # Conditional Parameters
     input_group = parser.add_mutually_exclusive_group(required=True)
