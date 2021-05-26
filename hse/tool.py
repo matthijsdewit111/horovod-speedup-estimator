@@ -63,16 +63,16 @@ def estimate_computation_time(model, batch_size):
 
     gc.collect()
 
-    forward_time_results = []
+    training_cycle_time_results = []
     for _ in range(args.iterations):
         start = time_ns()
         output = model(input_data)
         loss = loss_func(output, output)
         loss.backward()
         end = time_ns()
-        forward_time_results.append((end - start) * 1E-9)
+        training_cycle_time_results.append((end - start) * 1E-9)
 
-    return np.median(forward_time_results)
+    return np.median(training_cycle_time_results)
 
 
 if __name__ == "__main__":
