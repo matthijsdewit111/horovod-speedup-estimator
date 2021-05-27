@@ -14,6 +14,9 @@ from some_module import MySmallNet
 def dummy_training(model: torch.nn.Module, optimizer, batch_size):
     input_data = torch.randn(batch_size, 100)
 
+    num_param = sum([p.numel() for p in model.parameters() if p.requires_grad])
+    dummy_reduce_tensor = torch.randn(num_param)  # imagine these are the model parameters
+
     training_cycle_time_results = []
     for _ in range(100):
         start = time_ns()
@@ -21,7 +24,7 @@ def dummy_training(model: torch.nn.Module, optimizer, batch_size):
         output = model(input_data)
         loss = torch.functional.F.mse_loss(output, output)
         loss.backward()
-        optimizer.step()
+        dummy_reduce_tensor = hvd.allreduce(dummy_reduce_tensor)  # optimizer.step()
         end = time_ns()
         training_cycle_time_results.append((end - start) * 1E-9)
 
@@ -91,5 +94,5 @@ if __name__ == "__main__":
     if not os.path.exists(f"real_data/"):
         os.mkdir("real_data")
 
-    np.save(f"real_data/small_net_time_result_{size}.npy", snr)
-    np.save(f"real_data/large_net_time_result_{size}.npy", lnr)
+    np.save(f"real_data/small_net_time_result_{size}_dummy_reduce.npy", snr)
+    np.save(f"real_data/large_net_time_result_{size}_dummy_reduce.npy", lnr)
