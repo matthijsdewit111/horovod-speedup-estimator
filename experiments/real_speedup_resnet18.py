@@ -8,7 +8,7 @@ from torchvision.models import resnet18
 
 
 def dummy_training(model: torch.nn.Module, optimizer, batch_size):
-    input_data = torch.randn(batch_size, 100)
+    input_data = torch.randn(batch_size, 3, 224, 224)
 
     training_cycle_time_results = []
     for _ in range(20):
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     size = hvd.size()
     rank = hvd.rank()
 
-    batch_size_range = np.linspace(1, 100, num=50, dtype=int)
+    batch_size_range = np.linspace(1, 100, num=20, dtype=int)
 
     if size > 1:
         rnr = run_distributed()
