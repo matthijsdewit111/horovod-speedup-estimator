@@ -37,12 +37,12 @@ def run_distributed():
         time = dummy_training(resnet, hvd_optimizer, bs)
         resnet_results.append(time)
 
-        if rank == 0:
-            r = resnet_results[-1]
-            print(f"for batch size = {bs}:")
-            print(f"Sec/Img: {r / bs}")
-            print(f"Img/Sec/CPU: {bs / r}")
-            print(f"Img/Sec/{size}CPU: {size * bs / r}")
+        # if rank == 0:
+        #     r = resnet_results[-1]
+        #     print(f"for batch size = {bs}:")
+        #     print(f"Sec/Img: {r / bs}")
+        #     print(f"Img/Sec/CPU: {bs / r}")
+        #     print(f"Img/Sec/{size}CPU: {size * bs / r}")
 
     return resnet_results
 
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     size = hvd.size()
     rank = hvd.rank()
 
-    batch_size_range = np.linspace(20, 40, num=5, dtype=int)
+    batch_size_range = np.linspace(1, 50, num=12, dtype=int)
 
     rnr = run_distributed()
 
