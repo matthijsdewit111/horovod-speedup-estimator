@@ -11,7 +11,7 @@ def dummy_training(model: torch.nn.Module, optimizer, batch_size):
     input_data = torch.randn(batch_size, 3, 224, 224)
 
     training_cycle_time_results = []
-    for _ in range(20):
+    for _ in range(10):
         start = time_ns()
         model.zero_grad()
         output = model(input_data)
@@ -22,17 +22,6 @@ def dummy_training(model: torch.nn.Module, optimizer, batch_size):
         training_cycle_time_results.append((end - start) * 1E-9)
 
     return np.median(training_cycle_time_results)
-
-
-def run_sequential():
-    resnet = resnet18()
-    optimizer = torch.optim.SGD(resnet.parameters(), lr=0.05)
-
-    resnet_results = []
-    for bs in batch_size_range:
-        time = dummy_training(resnet, optimizer, bs)
-        resnet_results.append(time)
-    return resnet_results
 
 
 def run_distributed():
@@ -48,6 +37,13 @@ def run_distributed():
         time = dummy_training(resnet, hvd_optimizer, bs)
         resnet_results.append(time)
 
+        if rank == 0:
+            r = resnet_results[-1]
+            print(f"for batch size = {bs}:")
+            print(f"Sec/Img: {r / bs}")
+            print(f"Img/Sec/CPU: {bs / r}")
+            print(f"Img/Sec/{size}CPU: {size * bs / r}")
+
     return resnet_results
 
 
@@ -56,14 +52,12 @@ if __name__ == "__main__":
     size = hvd.size()
     rank = hvd.rank()
 
-    batch_size_range = np.linspace(1, 100, num=20, dtype=int)
+    batch_size_range = np.linspace(20, 40, num=5, dtype=int)
 
-    if size > 1:
-        rnr = run_distributed()
-    else:
-        rnr = run_sequential()
+    rnr = run_distributed()
 
-    if not os.path.exists(f"real_data/"):
-        os.mkdir("real_data")
+    if rank == 0:
+        if not os.path.exists(f"real_data/"):
+            os.mkdir("real_data")
 
-    np.save(f"real_data/resnet18_time_result_{size}.npy", rnr)
+        np.save(f"real_data/resnet18_time_result_{size}.npy", rnr)
