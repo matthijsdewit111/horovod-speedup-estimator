@@ -23,3 +23,27 @@ To explain the figure:
   external factors that may influence the estimation of computation times (such as cache hits/misses, or other processes
   using the system). Increasing the number of iterations (-it) will result in a reduction of these anomalies and a
   smoother figure, at the cost of longer simulation times.
+
+###Dealing with model hyper parameters
+
+The tool currently only works for models that take no required parameters, 
+as they would be impractical to specify on the command line.
+Therefore, if you have a model that takes required parameters, you will have to wrap it in a wrapper class.
+You can do this as follows:
+```python
+class MyNet(torch.nn.Module):
+    def __init__(self, a, b):  # this nn requires 2 parameters
+        self.a = a
+        self.b = b
+        ...
+    ...
+
+
+class MyNetWrapper(MyNet):  # wrapper behaves exactly like MyNet
+    def __init__(self):  # but requires 0 parameters
+        a = ...  # you define your parameters here
+        b = ...
+        super().__init__(a, b)  # and that's it
+```
+(The model is only initialized once by the tool, keep that in mind when defining model parameters in the wrapper)
+You can now use `MyNetWrapper` without issue.
