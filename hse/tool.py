@@ -6,9 +6,9 @@ import numpy as np
 import torch
 from scipy.optimize import curve_fit
 
-from hse.argument_parsing import get_args
-from hse.fit_functions import stepped_linear_2d
-from hse.plotting import plot_prediction, plot_predicted_speedup
+from argument_parsing import get_args
+from fit_functions import stepped_linear_2d
+from plotting import plot_prediction, plot_predicted_speedup
 
 ignore_2_and_3 = True
 
