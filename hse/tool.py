@@ -1,5 +1,6 @@
 import gc
 import importlib
+import pathlib
 from time import time_ns
 
 import numpy as np
@@ -33,7 +34,8 @@ def get_real_data(system):
     for num_proc in num_procs:
         if ignore_2_and_3 and num_proc in [2, 3]:
             continue
-        results_mean, _ = np.load(f"../benchmark/data/{system}/ar-time-result{num_proc}.npy")
+        base_path = pathlib.Path(__file__).parent.parent.resolve()
+        results_mean, _ = np.load(f"{base_path}/benchmark/data/{system}/ar-time-result{num_proc}.npy")
         means.append(results_mean)
 
     return np.array(means).T
@@ -100,7 +102,8 @@ if __name__ == "__main__":
     speedup = np.zeros((len(processes_range), len(batch_size_range)))
     for i, p in enumerate(processes_range):
         for j in range(len(batch_size_range)):
-            s = computation_times_per_batch[j] / ((predicted_communication_times[i] + computation_times_per_batch[j]) / p)
+            s = (computation_times_per_batch[j] * p) / \
+                (predicted_communication_times[i] + computation_times_per_batch[j])
             speedup[i][j] = s if s >= 1 else np.nan
 
     plot_predicted_speedup(speedup, batch_size_range, processes_range, save_as=args.save_as, cmap_name=args.color_map)
