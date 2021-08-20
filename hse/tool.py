@@ -106,4 +106,5 @@ if __name__ == "__main__":
                 (predicted_communication_times[i] + computation_times_per_batch[j])
             speedup[i][j] = s if s >= 1 else np.nan
 
-    plot_predicted_speedup(speedup, batch_size_range, processes_range, save_as=args.save_as, cmap_name=args.color_map)
+    plot_predicted_speedup(speedup, batch_size_range, processes_range,
+                           save_as=args.save_as, cmap_name=args.color_map, title=args.fig_title)

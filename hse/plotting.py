@@ -26,18 +26,20 @@ def plot_prediction(function, xdata, popt, X, Y, means):
     plt.show()
 
 
-def plot_predicted_speedup(speedup, x_values, y_values, save_as=None, cmap_name='plasma'):
+def plot_predicted_speedup(speedup, x_values, y_values, save_as=None, cmap_name='plasma', title=''):
     cmap = copy(cm.get_cmap(cmap_name))
     cmap.set_bad(color='black')
 
     plt.imshow(speedup, cmap=cmap, origin='lower', vmin=1, aspect='auto',
                extent=(min(x_values) - .5, max(x_values) + .5, min(y_values) - .5, max(y_values) + .5))
     plt.colorbar(label='speedup')
+    plt.title(title)
     plt.xlabel('batch size')
     plt.ylabel('#MPI processes')
     # plt.xticks(np.arange(min(x_values), max(x_values) + 1, 5))
     # plt.yticks(np.arange(min(y_values), max(y_values) + 1, 4))
     plt.grid(linewidth=0.3)
+    plt.tight_layout()
 
     if save_as:
         plt.savefig(save_as)

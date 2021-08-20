@@ -33,6 +33,8 @@ def get_parser():
                         default='plasma', type=non_empty_string)
     parser.add_argument('-sa', '--save-as', help="Save figure under specified name",
                         type=non_empty_string)
+    parser.add_argument('-ft', '--fig-title', help="Title of the figure",
+                        type=str)
 
     # Conditional Parameters
     input_group = parser.add_mutually_exclusive_group(required=True)
