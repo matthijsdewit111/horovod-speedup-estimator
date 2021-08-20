@@ -8,8 +8,8 @@ import torch
 from slater_jastrow_wrapper import SlaterJastrowWrapperH2, SlaterJastrowWrapperCH4
 
 
-def dummy_training(model: torch.nn.Module, optimizer, batch_size):
-    input_data = torch.randn(batch_size, 100)
+def dummy_training(model: torch.nn.Module, optimizer, batch_size, input_size):
+    input_data = torch.randn(batch_size, input_size)
 
     training_cycle_time_results = []
     for _ in range(100):
@@ -31,7 +31,7 @@ def run_sequential():
 
     h2_results = []
     for bs in batch_size_range:
-        time = dummy_training(sjh2, optimizer, bs)
+        time = dummy_training(sjh2, optimizer, bs, 6)
         h2_results.append(time)
 
     sjch4 = SlaterJastrowWrapperCH4()
@@ -39,7 +39,7 @@ def run_sequential():
 
     ch4_results = []
     for bs in batch_size_range:
-        time = dummy_training(sjch4, optimizer, bs)
+        time = dummy_training(sjch4, optimizer, bs, 30)
         ch4_results.append(time)
 
     return h2_results, ch4_results
@@ -55,7 +55,7 @@ def run_distributed():
 
     h2_results = []
     for bs in batch_size_range:
-        time = dummy_training(sjh2, hvd_optimizer, bs)
+        time = dummy_training(sjh2, hvd_optimizer, bs, 6)
         h2_results.append(time)
 
     sjch4 = SlaterJastrowWrapperCH4()
@@ -67,7 +67,7 @@ def run_distributed():
 
     ch4_results = []
     for bs in batch_size_range:
-        time = dummy_training(sjch4, hvd_optimizer, bs)
+        time = dummy_training(sjch4, hvd_optimizer, bs, 30)
         ch4_results.append(time)
 
     return h2_results, ch4_results
